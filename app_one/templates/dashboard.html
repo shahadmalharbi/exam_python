@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My Wish List</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col" style="text-align: right ;">
+          <a href="/logout" >Logout</a>
+        </div>
+      </div>
+      <div class="row">
+        <h1 style="text-align: center;">Hello, {{user.username}}!</h1>
+      </div>
+      <br>
+        <h4>Your Wish List</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Added by</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in user.items.all %}
+            <tr>
+              <td>
+                <a href="/show_item/{{item.id}}"> {{item.item}} </a>
+              </td>
+              <td>{{item.added_by.username}}</td>
+              <td>{{item.created_at.date}}</td>
+              <td>
+                <!--check if the user was create this item if yes delete from DB it, else remove from table-->
+                {% if item.added_by.username == user.username %}
+                <a href="/delete_wish/{{item.id}}">Delete</a>
+                {% else %}
+                <a href="/remove_wish/{{item.id}}"
+                  >Remove from my Wishlist</a
+                >
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      <br><br>
+        <h4>Other Users' Wish List</h4>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Added by</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in other %}
+            <tr>
+              <form action="/add_wish" method="POST">
+                {% csrf_token %}
+                <input value="{{item.id}}" name="item_id" type="hidden" />
+                <td>
+                  <a href="/show_item/{{item.id}}"> {{item.item}} </a>
+                </td>
+                <td>{{item.added_by.username}}</td>
+                <td>{{item.created_at.date}}</td>
+                <td>
+                  <input
+                    type="submit"
+                    value="Add to my wishlist"
+                    class="btn btn-outline-primary"
+                  />
+                </td>
+              </form>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="col" style="text-align: right;">
+          <a href="/add_item">Add Item</a>
+        </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
